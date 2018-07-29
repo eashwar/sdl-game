@@ -8,7 +8,7 @@ CC = g++
 COMPILER_FLAGS = -Wall -Werror -pedantic
 
 #LINKER_FLAGS specifies libraries
-LINKER_FLAGS = -lSDL2
+LINKER_FLAGS = -lSDL2 -lSDL2_image
 
 #OBJ_NAME specifies the name of exectuable
 OBJ_NAME = sdlproj

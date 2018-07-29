@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include "main.h"
 
@@ -12,11 +13,11 @@ int main( int argc, char* argv[] )
 
     std::string image_names[KEY_PRESS_SURFACE_TOTAL] =
     {
-        "res/hello.bmp",
-        "res/up.bmp",
-        "res/down.bmp",
-        "res/left.bmp",
-        "res/right.bmp"
+        "res/hello.png",
+        "res/up.png",
+        "res/down.png",
+        "res/left.png",
+        "res/right.png"
     };
 
     if ( !Init( window, window_surface ) )
@@ -26,7 +27,7 @@ int main( int argc, char* argv[] )
         return 1;
     }
 
-    if ( !LoadImages( image_surfaces, image_names, ( int ) KEY_PRESS_SURFACE_TOTAL ) )
+    if ( !LoadImages( image_surfaces, image_names, ( int ) KEY_PRESS_SURFACE_TOTAL, window_surface->format ) )
     {
         printf( "Failed to load images\n" );
         CleanupAndQuit( window, image_surfaces, ( int ) KEY_PRESS_SURFACE_TOTAL );
@@ -96,18 +97,31 @@ bool Init( SDL_Window* &window, SDL_Surface*  &window_surface )
         return false;
     }
 
+    int img_flags = IMG_INIT_PNG;
+    if ( !( IMG_Init(img_flags) & img_flags))
+    {
+        printf("SDL Image did not initialize. SDL ERROR: %s\n", IMG_GetError());
+    }
+
     window_surface = SDL_GetWindowSurface( window );
     return true;
 }
 
-bool LoadImages( SDL_Surface* image_surfaces[], std::string images[], int size )
+bool LoadImages( SDL_Surface* image_surfaces[], std::string images[], int size, SDL_PixelFormat* format )
 {
     for ( int i = 0; i < size; ++i )
     {
-        image_surfaces[i] = SDL_LoadBMP( images[i].c_str() );
-        if ( !image_surfaces[i] )
+        SDL_Surface* loaded_surface = IMG_Load( images[i].c_str() );
+        if ( !loaded_surface )
         {
-            printf( "Unable to load image. SDL ERROR: %s\n", SDL_GetError() );
+            printf( "Unable to load image %s. SDL ERROR: %s\n", images[i].c_str(), IMG_GetError() );
+            return false;
+        }
+        image_surfaces[i] = SDL_ConvertSurface( loaded_surface, format, 0);
+        SDL_FreeSurface(loaded_surface);
+        if (!image_surfaces[i])
+        {
+            printf("unable to optimize image %s. SDL Error: %s\n", images[i].c_str(), SDL_GetError());
             return false;
         }
     }
