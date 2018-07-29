@@ -1,1 +1,1 @@
-./git/sdl-game/sdlproj
+./home/cpi/git/sdl-game/sdlproj
