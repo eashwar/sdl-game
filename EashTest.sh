@@ -1,1 +1,1 @@
-./home/cpi/git/sdl-game/sdlproj
+make -C ~/git/sdl-game
