@@ -6,25 +6,78 @@ int main( int argc, char* argv[] )
 {
     SDL_Window* window = NULL;
     SDL_Surface* window_surface = NULL;
-    SDL_Surface* image_surface = NULL;
 
-    std::string image_name( "res/hello.bmp" );
+    SDL_Surface* image_surfaces[KEY_PRESS_SURFACE_TOTAL];
+    SDL_Surface* current_surface = NULL;
+
+    std::string image_names[KEY_PRESS_SURFACE_TOTAL] =
+    {
+        "res/hello.bmp",
+        "res/up.bmp",
+        "res/down.bmp",
+        "res/left.bmp",
+        "res/right.bmp"
+    };
 
     if ( !Init( window, window_surface ) )
     {
         printf( "Failed to initialize\n" );
+        CleanupAndQuit( window, image_surfaces, ( int ) KEY_PRESS_SURFACE_TOTAL );
+        return 1;
     }
 
-    if ( !LoadImage( image_surface, image_name ) )
+    if ( !LoadImages( image_surfaces, image_names, ( int ) KEY_PRESS_SURFACE_TOTAL ) )
     {
-        printf( "Failed to load image\n" );
+        printf( "Failed to load images\n" );
+        CleanupAndQuit( window, image_surfaces, ( int ) KEY_PRESS_SURFACE_TOTAL );
+        return 1;
     }
 
-    SDL_BlitSurface( image_surface, NULL, window_surface, NULL );
-    SDL_UpdateWindowSurface( window );
-    SDL_Delay( 4000 );
+    bool quit = false;
+    SDL_Event e;
 
-    CleanupAndQuit( window, image_surface );
+    current_surface = image_surfaces[KEY_PRESS_SURFACE_DEFAULT];
+
+    while ( !quit )
+    {
+        while ( SDL_PollEvent( &e ) != 0 )
+        {
+            if ( e.type == SDL_QUIT )
+            {
+                quit = true;
+            }
+            else if ( e.type == SDL_KEYDOWN )
+            {
+                switch( e.key.keysym.sym )
+                {
+                    case SDLK_UP:
+                        current_surface = image_surfaces[KEY_PRESS_SURFACE_UP];
+                        break;
+                    case SDLK_DOWN:
+                        current_surface = image_surfaces[KEY_PRESS_SURFACE_DOWN];
+                        break;
+                    case SDLK_LEFT:
+                        current_surface = image_surfaces[KEY_PRESS_SURFACE_LEFT];
+                        break;
+                    case SDLK_RIGHT:
+                        current_surface = image_surfaces[KEY_PRESS_SURFACE_RIGHT];
+                        break;
+                    case SDLK_ESCAPE:
+                        quit = true;
+                        break;
+                    default:
+                        current_surface = image_surfaces[KEY_PRESS_SURFACE_DEFAULT];
+                        break;
+                }
+            }
+        }
+
+
+        SDL_BlitSurface( current_surface, NULL, window_surface, NULL );
+        SDL_UpdateWindowSurface( window );
+    }
+
+    CleanupAndQuit( window, image_surfaces, ( int ) KEY_PRESS_SURFACE_TOTAL );
     return 0;
 }
 
@@ -47,21 +100,27 @@ bool Init( SDL_Window* &window, SDL_Surface*  &window_surface )
     return true;
 }
 
-bool LoadImage( SDL_Surface* &image_surface, std::string &image )
+bool LoadImages( SDL_Surface* image_surfaces[], std::string images[], int size )
 {
-    image_surface = SDL_LoadBMP( image.c_str() );
-    if ( !image_surface )
+    for ( int i = 0; i < size; ++i )
     {
-        printf( "Unable to load image. SDL ERROR: %s\n", SDL_GetError() );
-        return false;
+        image_surfaces[i] = SDL_LoadBMP( images[i].c_str() );
+        if ( !image_surfaces[i] )
+        {
+            printf( "Unable to load image. SDL ERROR: %s\n", SDL_GetError() );
+            return false;
+        }
     }
     return true;
 }
 
-void CleanupAndQuit( SDL_Window* &window, SDL_Surface* &image_surface )
+void CleanupAndQuit( SDL_Window* &window, SDL_Surface* image_surfaces[], int size )
 {
-    SDL_FreeSurface( image_surface );
-    image_surface = NULL;
+    for ( int i = 0; i < size; ++i )
+    {
+        SDL_FreeSurface( image_surfaces[i] );
+        image_surfaces[i] = NULL;
+    }
 
     SDL_DestroyWindow( window );
     window = NULL;
