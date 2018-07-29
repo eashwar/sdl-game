@@ -22,7 +22,7 @@ int main( int argc, char* argv[] )
 
     SDL_BlitSurface( image_surface, NULL, window_surface, NULL );
     SDL_UpdateWindowSurface( window );
-    SDL_Delay( 6000 );
+    SDL_Delay( 4000 );
 
     CleanupAndQuit( window, image_surface );
     return 0;
