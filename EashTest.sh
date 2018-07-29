@@ -1,1 +1,1 @@
-make -C ~/git/sdl-game
+./git/sdl-game/sdlproj
