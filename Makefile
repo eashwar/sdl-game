@@ -19,7 +19,7 @@ build: $(OBJS)
 	./$(OBJ_NAME)
 
 style: 
-	astyle src/*
+	astyle --suffix=none -A1 -s4 -C -S -N -Y -m0 -p -xg -D -k1 -W3i -xf -xh -c src/*
 
 clean:
 	rm $(OBJ_NAME)
