@@ -5,7 +5,7 @@ OBJS = src/main.cpp
 CC = g++
 
 #COMPILER_FLAGS specifies additional compilation options
-COMPILER_FLAGS = -w
+COMPILER_FLAGS = -Wall -Werror -pedantic
 
 #LINKER_FLAGS specifies libraries
 LINKER_FLAGS = -lSDL2
@@ -20,3 +20,6 @@ build: $(OBJS)
 
 style: 
 	astyle src/*
+
+clean:
+	rm $(OBJ_NAME)
