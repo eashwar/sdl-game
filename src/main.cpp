@@ -139,6 +139,7 @@ void CleanupAndQuit( SDL_Window* &window, SDL_Surface* image_surfaces[], int siz
     SDL_DestroyWindow( window );
     window = NULL;
 
+    IMG_Quit();
     SDL_Quit();
 }
 
