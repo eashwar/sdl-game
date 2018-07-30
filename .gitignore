@@ -35,3 +35,7 @@ sdlproj
 # VSCODE
 .vscode/
 
+# Vim
+*~
+*.swp
+*.swo
