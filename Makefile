@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile
-OBJS = src/main.cpp
+OBJS = src/main.cpp src/resource_loader/image_loader.cpp
 
 #CC specifies which compiler
 CC = g++

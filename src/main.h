@@ -18,7 +18,6 @@ enum KeyPressSurfaces
 };
 
 bool Init( SDL_Window* &window, SDL_Surface* &window_surface );
-bool LoadImages( SDL_Surface* image_surfaces[], std::string images[], int size, SDL_PixelFormat* format);
 void CleanupAndQuit( SDL_Window* &window, SDL_Surface* image_surfaces[], int size );
 
 int main( int argc, char* argv[] );

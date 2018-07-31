@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
+#include "resource_loader/image_loader.h"
 #include "main.h"
 
 int main( int argc, char* argv[] )
@@ -10,6 +11,8 @@ int main( int argc, char* argv[] )
 
     SDL_Surface* image_surfaces[KEY_PRESS_SURFACE_TOTAL];
     SDL_Surface* current_surface = NULL;
+
+    ImageLoader image_loader;
 
     std::string image_names[KEY_PRESS_SURFACE_TOTAL] =
     {
@@ -27,10 +30,18 @@ int main( int argc, char* argv[] )
         return 1;
     }
 
-    if ( !LoadImages( image_surfaces, image_names, ( int ) KEY_PRESS_SURFACE_TOTAL, window_surface->format ) )
+    image_loader = ImageLoader(window_surface->format);
+
+    try
     {
-        printf( "Failed to load images\n" );
-        CleanupAndQuit( window, image_surfaces, ( int ) KEY_PRESS_SURFACE_TOTAL );
+        for (int i = 0; i < (int) KEY_PRESS_SURFACE_TOTAL; ++i)
+        {
+            image_surfaces[i] = image_loader.LoadImageToSurface(image_names[i]);
+        }
+    }
+    catch (ImageLoadException e)
+    {
+        puts(e.GetError());
         return 1;
     }
 
@@ -107,27 +118,6 @@ bool Init( SDL_Window* &window, SDL_Surface*  &window_surface )
     return true;
 }
 
-bool LoadImages( SDL_Surface* image_surfaces[], std::string images[], int size, SDL_PixelFormat* format )
-{
-    for ( int i = 0; i < size; ++i )
-    {
-        SDL_Surface* loaded_surface = IMG_Load( images[i].c_str() );
-        if ( !loaded_surface )
-        {
-            printf( "Unable to load image %s. SDL ERROR: %s\n", images[i].c_str(), IMG_GetError() );
-            return false;
-        }
-        image_surfaces[i] = SDL_ConvertSurface( loaded_surface, format, 0);
-        SDL_FreeSurface(loaded_surface);
-        if (!image_surfaces[i])
-        {
-            printf("unable to optimize image %s. SDL Error: %s\n", images[i].c_str(), SDL_GetError());
-            return false;
-        }
-    }
-    return true;
-}
-
 void CleanupAndQuit( SDL_Window* &window, SDL_Surface* image_surfaces[], int size )
 {
     for ( int i = 0; i < size; ++i )
@@ -139,7 +129,6 @@ void CleanupAndQuit( SDL_Window* &window, SDL_Surface* image_surfaces[], int siz
     SDL_DestroyWindow( window );
     window = NULL;
 
-    IMG_Quit();
     SDL_Quit();
 }
 
