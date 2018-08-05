@@ -22,7 +22,7 @@ class ImageLoader
         ~ImageLoader();
 
         // loads the image specified by `filename` to a surface
-        // Throws ImageLoadException if surface_format is NULL NULL, this will ret
+        // Throws ImageLoadException if surface_format is NULL,
         // or if there are issues.
         SDL_Surface* LoadImageToSurface(std::string filename);
 
