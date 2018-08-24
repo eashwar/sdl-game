@@ -30,18 +30,18 @@ int main( int argc, char* argv[] )
         return 1;
     }
 
-    image_loader = ImageLoader(window_surface->format);
+    image_loader = ImageLoader( window_surface->format );
 
     try
     {
-        for (int i = 0; i < (int) KEY_PRESS_SURFACE_TOTAL; ++i)
+        for ( int i = 0; i < ( int ) KEY_PRESS_SURFACE_TOTAL; ++i )
         {
-            image_surfaces[i] = image_loader.LoadImageToSurface(image_names[i]);
+            image_surfaces[i] = image_loader.LoadImageToSurface( image_names[i] );
         }
     }
-    catch (ImageLoadException e)
+    catch ( ImageLoadException e )
     {
-        puts(e.GetError());
+        puts( e.GetError() );
         return 1;
     }
 
@@ -109,9 +109,9 @@ bool Init( SDL_Window* &window, SDL_Surface*  &window_surface )
     }
 
     int img_flags = IMG_INIT_PNG;
-    if ( !( IMG_Init(img_flags) & img_flags))
+    if ( !( IMG_Init( img_flags ) & img_flags ) )
     {
-        printf("SDL Image did not initialize. SDL ERROR: %s\n", IMG_GetError());
+        printf( "SDL Image did not initialize. SDL ERROR: %s\n", IMG_GetError() );
     }
 
     window_surface = SDL_GetWindowSurface( window );
